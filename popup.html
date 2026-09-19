@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NoPinWall</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="icon-wrap">
+        <img src="icons/icon48.png" alt="Logo" class="logo" />
+      </div>
+      <div>
+        <h2>NoPinWall</h2>
+        <span class="badge active">Active</span>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature-item">
+        <span class="check">&#10003;</span>
+        <span>Login popup blocked</span>
+      </div>
+      <div class="feature-item">
+        <span class="check">&#10003;</span>
+        <span>Screen overlay removed</span>
+      </div>
+      <div class="feature-item">
+        <span class="check">&#10003;</span>
+        <span>Scroll lock bypassed</span>
+      </div>
+    </div>
+
+    <button id="cleanBtn" class="btn">Force Clean Page</button>
+    <div id="statusMsg" class="status-msg"></div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

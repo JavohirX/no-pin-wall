@@ -1,0 +1,69 @@
+/* Pinterest Banner & Login Modal Remover */
+
+/* 1. Hide modal container, dialogs, and overlays immediately */
+div[role="dialog"][aria-label="modal"],
+div[data-test-id="login-modal-redesign"],
+div[data-test-id="full-page-signup-modal"],
+div[data-test-id="signup-modal-inspired"],
+div[data-test-id="fullPageSignupModal"],
+div[data-test-id="unauth-banner"],
+div[data-test-id="sheet-container"],
+div[data-test-id="giftwrap"],
+div[data-test-id="giftWrap"],
+div[data-test-id="mobile-signup-mask"],
+div[data-test-id="mobile-modal-mask-overlay"],
+div[data-test-id*="backdrop"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+/* 2. Hide darkened backdrop / full-screen overlays */
+div[style*="background-color: rgba(0, 0, 0, 0.6)"],
+div[style*="background-color: rgba(0, 0, 0"][style*="z-index"],
+div[style*="background-color: rgba(0,0,0"][style*="z-index"],
+div[style*="background-color: rgb(0 0 0 /"][style*="z-index"],
+div[style*="z-index: 10001"]:empty,
+div[style*="z-index:10001"]:empty,
+div[style*="z-index: 10000"]:empty,
+div[style*="z-index:10000"]:empty,
+div[style*="z-index: 9999"]:empty,
+div[style*="z-index:9999"]:empty {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* 3. Hide any parent wrappers of the login modal */
+div:has(> div > [data-test-id="login-modal-redesign"]),
+div:has(> [data-test-id="login-modal-redesign"]),
+div:has(> div > [data-test-id="full-page-signup-modal"]),
+div:has(> [data-test-id="full-page-signup-modal"]) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* 4. Keep scrolling and clicking always enabled */
+html,
+body {
+  overflow: auto !important;
+  overflow-y: auto !important;
+  position: static !important;
+  height: auto !important;
+  max-height: none !important;
+  pointer-events: auto !important;
+}
+
+#desktopWrapper {
+  position: relative !important;
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+  pointer-events: auto !important;
+}
+
