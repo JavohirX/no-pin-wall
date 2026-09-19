@@ -1,6 +1,10 @@
 # NoPinWall
 
 <p align="center">
+  <img src="icons/icon128.png" width="96" height="96" alt="NoPinWall Logo" />
+</p>
+
+<p align="center">
   <strong>Browse Pinterest freely without annoying login popups or scroll locks.</strong>
 </p>
 
@@ -75,6 +79,10 @@ NoPinWall/
 ├── .github/
 │   └── workflows/
 │       └── package.yml        # Automated release packaging
+├── icons/
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
 ├── .gitignore
 ├── content.css                # Early CSS rule injection
 ├── content.js                 # DOM cleaner & scroll restorer
