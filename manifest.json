@@ -2,6 +2,8 @@
   "manifest_version": 3,
   "name": "NoPinWall",
   "version": "1.0.1",
+  "description": "Browse Pinterest without logging in. Removes the login popup, sign-up wall, dark overlay and scroll lock. No tracking.",
+  "homepage_url": "https://github.com/JavohirX/no-pin-wall",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",

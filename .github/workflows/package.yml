@@ -1,0 +1,68 @@
+name: Package Extension
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write  # needed to create GitHub releases
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate manifest
+        run: jq -e '.manifest_version == 3 and (.version | length > 0)' manifest.json
+
+      - name: Check tag matches manifest version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          MANIFEST_VERSION="$(jq -r .version manifest.json)"
+          if [ "v${MANIFEST_VERSION}" != "${GITHUB_REF_NAME}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match manifest.json version ${MANIFEST_VERSION}"
+            exit 1
+          fi
+
+      - name: Create extension zip
+        run: |
+          zip -r NoPinWall.zip \
+            manifest.json \
+            content.css \
+            content.js \
+            popup.html \
+            popup.css \
+            popup.js \
+            icons/ \
+            README.md \
+            PRIVACY.md \
+            LICENSE
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NoPinWall-extension
+          path: NoPinWall.zip
+
+      - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: NoPinWall ${{ github.ref_name }}, browse Pinterest without logging in
+          files: NoPinWall.zip
+          generate_release_notes: true
+          body: |
+            NoPinWall removes the Pinterest login popup, the dark overlay and the scroll lock, so you can browse Pinterest without an account. Works in Chrome, Edge, Brave, Opera and Vivaldi.
+
+            ### Install
+            1. Download **NoPinWall.zip** below and unzip it into a folder you will keep.
+            2. Open `chrome://extensions` (or `edge://extensions`, `brave://extensions`, `opera://extensions`, `vivaldi://extensions`).
+            3. Turn on **Developer mode**, click **Load unpacked**, and select the unzipped folder.
+
+            Updating from an older version: replace the folder's contents with the new ZIP, then click the reload icon on the extension's card.

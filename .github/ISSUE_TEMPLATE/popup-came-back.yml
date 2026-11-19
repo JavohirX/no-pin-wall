@@ -1,0 +1,65 @@
+name: The login popup came back
+description: Pinterest shows a login or sign-up popup, an overlay, or locks scrolling even with NoPinWall installed.
+title: "Popup is back: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Pinterest changes its page code from time to time, which can break NoPinWall's selectors. These details help fix it quickly.
+        Before reporting, click the NoPinWall toolbar icon, press **Force Clean Page**, and reload the tab.
+  - type: input
+    id: url
+    attributes:
+      label: Pinterest page URL
+      description: The page where the popup appeared. Remove anything personal from it.
+      placeholder: https://www.pinterest.com/pin/123456789/
+    validations:
+      required: true
+  - type: dropdown
+    id: symptom
+    attributes:
+      label: What do you see?
+      multiple: true
+      options:
+        - Login / sign-up popup
+        - Dark or grey overlay
+        - Page won't scroll
+        - Can't click pins
+        - Sign-up banner at the bottom
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      description: Find it under Help > About in your browser.
+      placeholder: "e.g. Chrome 150.0.1234.56"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: NoPinWall version
+      description: Shown on your browser's extensions page.
+      placeholder: 1.0.1
+  - type: dropdown
+    id: force-clean
+    attributes:
+      label: Did "Force Clean Page" remove it?
+      options:
+        - "No"
+        - "Yes, but it came back"
+        - Didn't try
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Drag and drop a screenshot of the popup here.
+  - type: textarea
+    id: selector
+    attributes:
+      label: Popup HTML (optional, very helpful)
+      description: Right-click the popup, choose Inspect, then copy the opening tag of the popup's outer element, especially any `data-test-id` or `role` attribute.
+      render: html
