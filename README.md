@@ -32,7 +32,7 @@
 
 You open Pinterest without an account, often from a Google Images result, and within a few seconds:
 
-- a **login / sign-up popup** covers the pin you came to see,
+- a **"Log in to see more" popup** covers the pin you came to see,
 - the page goes **dark or grey** and nothing behind it can be clicked,
 - **scrolling stops working**, so you can't see more pins,
 - a **"sign up" banner** sits at the bottom of the screen,
@@ -44,12 +44,21 @@ Pinterest does this to push visitors into creating an account. NoPinWall undoes 
 
 | Problem on Pinterest | What NoPinWall does |
 | --- | --- |
-| Login or sign-up popup (modal) | Hidden with CSS before the page paints, then removed from the page |
-| Dark / grey overlay over the page | Removed |
+| "Log in to see more" / sign-up popup (modal) | Hidden with CSS before the page paints |
+| Dark / grey overlay over the page | Hidden |
 | Page won't scroll | Resets the `overflow` and `position` lock on `<html>` and `<body>` |
 | Pins behind the popup can't be clicked | Removes the `inert` and `aria-hidden` flags Pinterest puts on the page |
 | Popup reappears after opening a pin or scrolling | Watches the page and removes each new popup as it appears |
 | Bottom "sign up" banner | Hidden |
+
+**You can still log in.** When you click **Log in** or **Sign up**, or open `pinterest.com/login`, NoPinWall steps aside and Pinterest's own login form appears. Close it and the blocking resumes.
+
+### What it can't do
+
+Pinterest decides how much content a logged-out visitor gets, and NoPinWall can't add content that Pinterest never sends:
+
+- **Pin pages work fully.** If you land on a pin from Google Images or a shared link, you see the pin and can scroll through the related pins below it.
+- **Search results are limited.** For logged-out visitors, a Pinterest search returns about 25 pins. They don't link to their pin pages, and scrolling doesn't load more. NoPinWall removes the popup over them, but it can't open or load pins that aren't in the page.
 
 It runs on pinterest.com and 22 country sites: `.co.uk`, `.ca`, `.com.au`, `.de`, `.fr`, `.es`, `.it`, `.jp`, `.cl`, `.com.mx`, `.se`, `.dk`, `.ch`, `.at`, `.pt`, `.nz`, `.ie`, `.ph`, `.in`, `.co.kr`, `.nl` and `.com.br`.
 
@@ -100,16 +109,17 @@ Full policy: [PRIVACY.md](PRIVACY.md).
 | Close the popup or press Esc | Briefly at best | The popup returns as you scroll or open pins |
 | Delete the popup in DevTools (Inspect, then Delete element) | Until the next popup | Scrolling often stays locked, and you repeat it on every page |
 | uBlock Origin custom filters | Can work | You write the filters yourself and fix them when Pinterest changes its page |
-| **NoPinWall** | **Yes** | Chromium browsers only for now (no Firefox or Safari yet) |
+| **NoPinWall** | **Yes** | Chromium browsers only for now (no Firefox or Safari yet); logged-out search still shows only about 25 pins |
 
 ## How it works
 
 For developers, or anyone who wants to check what it does:
 
 1. **CSS injected before the page paints** ([`content.css`](content.css)). The stylesheet loads at `document_start` and hides the known popup elements (`div[role="dialog"][aria-label="modal"]`, `[data-test-id="login-modal-redesign"]`, `[data-test-id="full-page-signup-modal"]` and others), so the popup never flashes on screen.
-2. **Page cleanup and scroll unlock** ([`content.js`](content.js)). Removes the popup and its backdrop from the DOM, strips `overflow: hidden` and `position: fixed` from `<html>` and `<body>`, and removes `inert` and `aria-hidden` from the page content.
-3. **`MutationObserver` for a single-page app.** Pinterest loads new content without reloading the page, so the extension watches for newly added popups and removes them as they appear.
-4. **Toolbar popup** ([`popup.html`](popup.html), [`popup.js`](popup.js)). Shows that the extension is active and has a **Force Clean Page** button to run the cleanup by hand.
+2. **Page cleanup and scroll unlock** ([`content.js`](content.js)). Marks the popup and its backdrop as hidden, strips `overflow: hidden` and `position: fixed` from `<html>` and `<body>`, and removes `inert` and `aria-hidden` from the page content. The popup containers stay in the page rather than being deleted, because Pinterest reuses them for the login form.
+3. **`MutationObserver` for a single-page app.** Pinterest loads new content without reloading the page, so the extension watches for newly added popups and hides them as they appear.
+4. **Steps aside for logins.** On `/login/` and `/signup/`, and after you click **Log in** or **Sign up**, the extension sets `data-nopinwall-paused` on `<html>`, which switches off both the CSS and the cleanup until the login dialog closes.
+5. **Toolbar popup** ([`popup.html`](popup.html), [`popup.js`](popup.js)). Shows that the extension is active and has a **Force Clean Page** button to run the cleanup by hand.
 
 Built on Manifest V3. No frameworks, no build step, no background service worker.
 
@@ -117,7 +127,7 @@ Built on Manifest V3. No frameworks, no build step, no background service worker
 
 ### How do I view Pinterest without logging in?
 
-Install NoPinWall (see [Install](#install)), then open any Pinterest page. The login popup is hidden and you can scroll, search and open pins as a guest.
+Install NoPinWall (see [Install](#install)), then open any Pinterest page. The "Log in to see more" popup is hidden and the page scrolls again. Pin pages, such as the ones Google Images links to, work fully. Search works too, but Pinterest only gives logged-out visitors about 25 results per search (see [What it can't do](#what-it-cant-do)).
 
 ### Why does Pinterest keep asking me to log in or sign up?
 
@@ -147,9 +157,13 @@ Pinterest changes its page code from time to time, which can break the selectors
 2. Reload the Pinterest tab.
 3. If it still shows up, [open an issue](https://github.com/JavohirX/no-pin-wall/issues/new/choose) with the page URL and a screenshot.
 
-### I have a Pinterest account. Do I need this?
+### Can I still log in to Pinterest with NoPinWall installed?
 
-No. If you're logged in, Pinterest doesn't show the login wall. You can turn NoPinWall off on the extensions page.
+Yes. Click **Log in** or **Sign up**, or go to `pinterest.com/login`, and Pinterest's login form appears as usual. NoPinWall pauses while the form is open and resumes blocking when you close it.
+
+### Why can't I open pins from Pinterest search results?
+
+When you're logged out, Pinterest's search results don't link to their pin pages, and Pinterest only sends about 25 of them. That limit comes from Pinterest's servers, so no extension can lift it. Pins you open from Google Images or a shared link work normally.
 
 ## Project structure
 

@@ -1,18 +1,26 @@
-/* Pinterest Banner & Login Modal Remover */
+/* Pinterest Banner & Login Modal Remover
+   Every rule is off while <html> has data-nopinwall-paused (set by content.js
+   on the login/sign-up pages and after the user clicks "Log in" or "Sign up"). */
+
+/* 0. Login-wall elements content.js has found and marked */
+html:not([data-nopinwall-paused]) [data-nopinwall-hidden] {
+  display: none !important;
+}
 
 /* 1. Hide modal container, dialogs, and overlays immediately */
-div[role="dialog"][aria-label="modal"],
-div[data-test-id="login-modal-redesign"],
-div[data-test-id="full-page-signup-modal"],
-div[data-test-id="signup-modal-inspired"],
-div[data-test-id="fullPageSignupModal"],
-div[data-test-id="unauth-banner"],
-div[data-test-id="sheet-container"],
-div[data-test-id="giftwrap"],
-div[data-test-id="giftWrap"],
-div[data-test-id="mobile-signup-mask"],
-div[data-test-id="mobile-modal-mask-overlay"],
-div[data-test-id*="backdrop"] {
+html:not([data-nopinwall-paused]) div[role="dialog"][aria-label="modal"],
+html:not([data-nopinwall-paused]) div[data-test-id="login-modal-redesign"],
+html:not([data-nopinwall-paused]) div[data-test-id="full-page-signup-modal"],
+html:not([data-nopinwall-paused]) div[data-test-id="signup-modal-inspired"],
+html:not([data-nopinwall-paused]) div[data-test-id="fullPageSignupModal"],
+html:not([data-nopinwall-paused]) div[data-test-id="unauth-banner"],
+html:not([data-nopinwall-paused]) div[data-test-id="login-gradient-upsell"],
+html:not([data-nopinwall-paused]) div[data-test-id="sheet-container"],
+html:not([data-nopinwall-paused]) div[data-test-id="giftwrap"],
+html:not([data-nopinwall-paused]) div[data-test-id="giftWrap"],
+html:not([data-nopinwall-paused]) div[data-test-id="mobile-signup-mask"],
+html:not([data-nopinwall-paused]) div[data-test-id="mobile-modal-mask-overlay"],
+html:not([data-nopinwall-paused]) div[data-test-id*="backdrop"] {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -20,16 +28,16 @@ div[data-test-id*="backdrop"] {
 }
 
 /* 2. Hide darkened backdrop / full-screen overlays */
-div[style*="background-color: rgba(0, 0, 0, 0.6)"],
-div[style*="background-color: rgba(0, 0, 0"][style*="z-index"],
-div[style*="background-color: rgba(0,0,0"][style*="z-index"],
-div[style*="background-color: rgb(0 0 0 /"][style*="z-index"],
-div[style*="z-index: 10001"]:empty,
-div[style*="z-index:10001"]:empty,
-div[style*="z-index: 10000"]:empty,
-div[style*="z-index:10000"]:empty,
-div[style*="z-index: 9999"]:empty,
-div[style*="z-index:9999"]:empty {
+html:not([data-nopinwall-paused]) div[style*="background-color: rgba(0, 0, 0, 0.6)"],
+html:not([data-nopinwall-paused]) div[style*="background-color: rgba(0, 0, 0"][style*="z-index"],
+html:not([data-nopinwall-paused]) div[style*="background-color: rgba(0,0,0"][style*="z-index"],
+html:not([data-nopinwall-paused]) div[style*="background-color: rgb(0 0 0 /"][style*="z-index"],
+html:not([data-nopinwall-paused]) div[style*="z-index: 10001"]:empty,
+html:not([data-nopinwall-paused]) div[style*="z-index:10001"]:empty,
+html:not([data-nopinwall-paused]) div[style*="z-index: 10000"]:empty,
+html:not([data-nopinwall-paused]) div[style*="z-index:10000"]:empty,
+html:not([data-nopinwall-paused]) div[style*="z-index: 9999"]:empty,
+html:not([data-nopinwall-paused]) div[style*="z-index:9999"]:empty {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -39,18 +47,18 @@ div[style*="z-index:9999"]:empty {
 }
 
 /* 3. Hide any parent wrappers of the login modal */
-div:has(> div > [data-test-id="login-modal-redesign"]),
-div:has(> [data-test-id="login-modal-redesign"]),
-div:has(> div > [data-test-id="full-page-signup-modal"]),
-div:has(> [data-test-id="full-page-signup-modal"]) {
+html:not([data-nopinwall-paused]) div:has(> div > [data-test-id="login-modal-redesign"]),
+html:not([data-nopinwall-paused]) div:has(> [data-test-id="login-modal-redesign"]),
+html:not([data-nopinwall-paused]) div:has(> div > [data-test-id="full-page-signup-modal"]),
+html:not([data-nopinwall-paused]) div:has(> [data-test-id="full-page-signup-modal"]) {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
 }
 
 /* 4. Keep scrolling and clicking always enabled */
-html,
-body {
+html:not([data-nopinwall-paused]),
+html:not([data-nopinwall-paused]) body {
   overflow: auto !important;
   overflow-y: auto !important;
   position: static !important;
@@ -59,7 +67,7 @@ body {
   pointer-events: auto !important;
 }
 
-#desktopWrapper {
+html:not([data-nopinwall-paused]) #desktopWrapper {
   position: relative !important;
   overflow: visible !important;
   height: auto !important;

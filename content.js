@@ -8,6 +8,7 @@
     'div[data-test-id="signup-modal-inspired"]',
     'div[data-test-id="fullPageSignupModal"]',
     'div[data-test-id="unauth-banner"]',
+    'div[data-test-id="login-gradient-upsell"]',
     'div[data-test-id="sheet-container"]',
     'div[data-test-id="giftwrap"]',
     'div[data-test-id="giftWrap"]',
@@ -15,6 +16,51 @@
     'div[data-test-id="mobile-modal-mask-overlay"]',
     'div[data-test-id*="backdrop"]'
   ];
+
+  // Stay out of the way when the user wants to log in: on Pinterest's own
+  // login/sign-up pages, and after they click a "Log in" or "Sign up" button.
+  // While paused, <html> carries data-nopinwall-paused, which also switches off content.css.
+  const AUTH_PATH = /^\/(login|signup)(\/|$)/;
+  const AUTH_BUTTONS = '[data-test-id="login-button"], [data-test-id="signup-button"]';
+  const LOGIN_DIALOG = 'div[role="dialog"][aria-label="modal"]';
+  let loginRequestedAt = null; // page path when the user clicked Log in / Sign up
+  let loginDialogSeen = false;
+
+  function isPaused() {
+    if (AUTH_PATH.test(location.pathname)) return true;
+    if (loginRequestedAt === null) return false;
+    const dialogOpen = !!document.querySelector(LOGIN_DIALOG);
+    if (dialogOpen) loginDialogSeen = true;
+    // Resume once the user closes the login dialog or leaves the page.
+    if ((loginDialogSeen && !dialogOpen) || location.pathname !== loginRequestedAt) {
+      loginRequestedAt = null;
+      loginDialogSeen = false;
+      return false;
+    }
+    return true;
+  }
+
+  function syncPause() {
+    const paused = isPaused();
+    document.documentElement.toggleAttribute('data-nopinwall-paused', paused);
+    return paused;
+  }
+
+  syncPause();
+
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element) || !event.target.closest(AUTH_BUTTONS)) return;
+    loginRequestedAt = location.pathname;
+    loginDialogSeen = false;
+    syncPause();
+    // If no login dialog shows up, go back to blocking.
+    setTimeout(() => {
+      if (loginRequestedAt !== null && !loginDialogSeen) {
+        loginRequestedAt = null;
+        removeModals();
+      }
+    }, 3000);
+  }, true);
 
   function isSafeToRemove(container) {
     if (!container || container === document.body || container === document.documentElement) {
@@ -76,7 +122,17 @@
     });
   }
 
+  // Hide instead of deleting: Pinterest renders the login dialog the user opens
+  // on purpose into these same containers, so they have to stay in the page.
+  // content.css hides anything marked with data-nopinwall-hidden unless paused.
+  function hide(el) {
+    if (el.hasAttribute('data-nopinwall-hidden')) return false;
+    el.setAttribute('data-nopinwall-hidden', '');
+    return true;
+  }
+
   function removeModals() {
+    if (syncPause()) return false;
     let removed = false;
 
     // 1. Remove targeted modal dialogs and outer fixed containers
@@ -93,8 +149,7 @@
           target = dialogContainer;
         }
 
-        target.remove();
-        removed = true;
+        if (hide(target)) removed = true;
       });
     }
 
@@ -118,8 +173,7 @@
 
       if ((hasDarkBg && hasHighZ) || (hasDarkBg && !el.children.length) || (hasHighZ && !el.children.length)) {
         if (isSafeToRemove(el) && !el.querySelector('article') && !el.querySelector('img')) {
-          el.remove();
-          removed = true;
+          if (hide(el)) removed = true;
         }
       }
     });
